@@ -12,6 +12,7 @@ from nanobot.bus.queue import MessageBus
 from nanobot.providers.base import LLMProvider
 from nanobot.agent.context import ContextBuilder
 from nanobot.agent.tools.registry import ToolRegistry
+from nanobot.agent.commands import default_registry
 from nanobot.agent.tools.filesystem import ReadFileTool, WriteFileTool, EditFileTool, ListDirTool
 from nanobot.agent.tools.shell import ExecTool
 from nanobot.agent.tools.web import WebSearchTool, WebFetchTool
@@ -161,7 +162,21 @@ class AgentLoop:
         
         # Get or create session
         session = self.sessions.get_or_create(msg.session_key)
-        
+
+        # Check for command (starts with /)
+        if msg.content.startswith("/"):
+            command_name = msg.content[1:].strip().split()[0]  # Get first word after /
+            response = default_registry.execute(command_name, session=session)
+            if response:
+                # For commands like /reset that modify the session, save it
+                self.sessions.save(session)
+                return OutboundMessage(
+                    channel=msg.channel,
+                    chat_id=msg.chat_id,
+                    content=response
+                )
+            # If command not found, fall through to normal processing
+
         # Update tool contexts
         message_tool = self.tools.get("message")
         if isinstance(message_tool, MessageTool):
