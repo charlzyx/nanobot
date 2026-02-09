@@ -598,6 +598,29 @@ That's it! Environment variables, model prefixing, config matching, and `nanobot
 
 Interactive mode exits: `exit`, `quit`, `/exit`, `/quit`, `:q`, or `Ctrl+D`.
 
+## 💬 User Commands
+
+nanobot supports slash commands in any chat channel (Telegram, Discord, Feishu, WhatsApp, etc.).
+
+| Command | Description |
+|---------|-------------|
+| `/reset` | Clear current session history (forget the conversation) |
+| `/help` | Show all available commands |
+
+### Using Commands
+
+Simply type the command in your chat:
+
+```
+/reset
+```
+
+The `/reset` command clears your conversation history, useful when you want to start fresh. The `/help` command displays all available commands.
+
+### Extending Commands
+
+Developers can add custom commands by registering them with the `CommandRegistry` in `nanobot/agent/commands.py`. See the source code for examples.
+
 <details>
 <summary><b>Scheduled Tasks (Cron)</b></summary>
 
